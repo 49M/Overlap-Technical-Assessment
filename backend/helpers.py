@@ -138,7 +138,7 @@ def grayscale_background_with_faces(image_np):
     return processed_image, detections
 
 
-def grayscale_background_with_person(image_np):
+def grayscale_background_with_person(image_np, mode):
     """
     Apply grayscale to background while keeping the entire person/body in color.
     MediaPipe Image Segmentation -> full body detection.
@@ -166,15 +166,37 @@ def grayscale_background_with_person(image_np):
     # Squeeze to remove any extra dimensions
     binary_mask = (category_mask > 0).astype(np.uint8).squeeze()
 
-    # Create 3-channel mask for broadcasting
-    mask_3ch = np.stack([binary_mask] * 3, axis=-1)
+    # # Create 3-channel mask for broadcasting
+    # mask_3ch = np.stack([binary_mask] * 3, axis=-1)
+    soft_mask = cv2.GaussianBlur(
+        binary_mask.astype(np.float32),
+        (21, 21),
+        0
+    )
 
-    # Create grayscale version of entire image
-    gray_image = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
-    gray_image_3ch = cv2.cvtColor(gray_image, cv2.COLOR_GRAY2RGB)
+    soft_mask = 1.0 - soft_mask
 
-    # Blend: where mask=1 (person), use original color; where mask=0 (background), use grayscale
-    processed_image = np.where(mask_3ch, gray_image_3ch, image_np)
+    soft_mask_3ch = np.stack([soft_mask] * 3, axis=-1)
+
+    if mode == "grayscale":
+        # Create grayscale version of entire image
+        gray_image = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+        gray_image_3ch = cv2.cvtColor(gray_image, cv2.COLOR_GRAY2RGB)
+
+        # Blend: where mask=1 (person), use original color; where mask=0 (background), use grayscale
+        processed_image = (
+            soft_mask_3ch * image_np +
+            (1 - soft_mask_3ch) * gray_image_3ch
+        ).astype(np.uint8)
+    else:
+        # Create blurred version of entire image
+        blurred_image = cv2.GaussianBlur(image_np, (31, 31), 0)
+
+        # Blend: person stays color, background blurred
+        processed_image = (
+            soft_mask_3ch * image_np +
+            (1 - soft_mask_3ch) * blurred_image
+        ).astype(np.uint8)
 
     # Calculate confidence as percentage of frame containing person
     person_pixels = np.sum(binary_mask)

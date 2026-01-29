@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import VideoPlayer from './components/VideoPlayer';
 import DetectionStats from './components/DetectionStats';
+import VideoProcessModeButton from './components/videoProcessModeButton';
 import { videoUrl } from './consts';
 
 export interface FaceDetection {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
   const [coverage, setCoverage] = useState<number>(0);
   const [confidence, setConfidence] = useState<number>(0)
   const [faceDetections, setFaceDetections] = useState<FaceDetection[]>([]);
+  const [processingMode, setProcessingMode] = useState<'grayscale' | 'blur'>('grayscale');
 
   // const pingBackend = async () => {
   //   try {
@@ -51,9 +53,10 @@ const App: React.FC = () => {
     );
   };
 
-  const processFrame = async (blob: Blob) => {
+  const processFrame = async (blob: Blob, mode: 'grayscale' | 'blur') => {
     const formData = new FormData();
     formData.append("image", blob);
+    formData.append("mode", mode);
 
     const res = await fetch("http://127.0.0.1:8080/process-frame", {
       method: "POST",
@@ -82,7 +85,7 @@ const App: React.FC = () => {
 
         try {
           const blob = await captureFrame(videoRef.current!);
-          const result = await processFrame(blob);
+          const result = await processFrame(blob, processingMode);
 
           const endTime = performance.now();
           setProcessingTime(Math.round(endTime - startTime));
@@ -118,7 +121,7 @@ const App: React.FC = () => {
         clearInterval(interval);
       }
     };
-  }, []);
+  }, [processingMode]);
 
   return (
     <div style={{
@@ -149,6 +152,27 @@ const App: React.FC = () => {
         }}>
           AI-Powered Person Segmentation & Background Processing
         </p>
+      </div>
+
+      {/* Processing Mode Selection */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '2rem',
+        gap: '1rem'
+      }}>
+        <VideoProcessModeButton
+          currentMode={processingMode}
+          targetMode="grayscale"
+          onClick={() => setProcessingMode('grayscale')}
+          label="Grayscale Background"
+        />
+        <VideoProcessModeButton
+          currentMode={processingMode}
+          targetMode="blur"
+          onClick={() => setProcessingMode('blur')}
+          label="Blur Background"
+        />
       </div>
 
       {/* Video Grid */}

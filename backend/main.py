@@ -50,12 +50,15 @@ def process_frame_api():
         if "image" not in request.files:
             return jsonify({"error": "No image provided"}), 400
 
+        # Get mode from form data (not files)
+        mode = request.form.get("mode", "grayscale")
+
         # Read the uploaded image
         image = Image.open(request.files["image"]).convert("RGB")
         image_np = np.array(image)
 
-        # Process: grayscale background, keep entire person/body in color
-        processed_image, detections = grayscale_background_with_person(image_np)
+        # Process: grayscale or blur background, keep entire person/body in color
+        processed_image, detections = grayscale_background_with_person(image_np, mode)
 
         # Convert processed image back to PIL Image
         processed_pil = Image.fromarray(processed_image)
