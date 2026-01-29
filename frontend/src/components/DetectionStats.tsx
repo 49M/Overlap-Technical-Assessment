@@ -20,7 +20,8 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
 
   const StatCard = ({ icon, value, label, color }: { icon: string, value: string | number, label: string, color: string }) => (
     <div style={{
-      background: 'white',
+      background: 'rgba(255, 255, 255, 0.75)',
+      backdropFilter: 'blur(10px)',
       borderRadius: '12px',
       padding: '1.5rem',
       boxShadow: '0 4px 6px rgba(0,0,0,0.1)',

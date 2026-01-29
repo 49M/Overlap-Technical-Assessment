@@ -71,7 +71,6 @@ const App: React.FC = () => {
       interval = setInterval(async () => {
         const isPlaying = videoRef.current && !videoRef.current.paused && !videoRef.current.ended;
 
-        // Update processing state based on video playback
         setIsProcessing(!!isPlaying);
 
         if (!isPlaying || isProcessingFrame) {
@@ -164,7 +163,8 @@ const App: React.FC = () => {
         <div
           className="video-card"
           style={{
-            background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
+            background: 'linear-gradient(135deg, rgba(255, 245, 245, 0.75) 0%, rgba(255, 255, 255, 0.75) 100%)',
+            backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '1.5rem',
             boxShadow: '0 20px 60px rgba(255, 53, 53, 0.2)',
@@ -224,7 +224,8 @@ const App: React.FC = () => {
         <div
           className="video-card"
           style={{
-            background: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)',
+            background: 'linear-gradient(135deg, rgba(255, 245, 245, 0.75) 0%, rgba(255, 255, 255, 0.75) 100%)',
+            backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '1.5rem',
             boxShadow: '0 20px 60px rgba(255, 53, 53, 0.2)',
