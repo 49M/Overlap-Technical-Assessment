@@ -1,12 +1,13 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, CSSProperties } from 'react';
 
 interface VideoPlayerProps {
   src: string;
   onLoadedMetadata?: () => void;
+  style?: CSSProperties;
 }
 
 const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
-  ({ src, onLoadedMetadata }, ref) => {
+  ({ src, onLoadedMetadata, style }, ref) => {
     return (
       <video
         ref={ref}
@@ -15,6 +16,7 @@ const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
         controls
         onLoadedMetadata={onLoadedMetadata}
         crossOrigin="anonymous"
+        style={style}
       />
     );
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaceDetection } from '../App';
+import { FaceDetection } from '../hooks/useFaceDetection';
 
 interface FaceDetectionOverlayProps {
   detections: FaceDetection[];
