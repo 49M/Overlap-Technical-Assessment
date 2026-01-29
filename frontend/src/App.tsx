@@ -1,5 +1,7 @@
-import React, { useRef, useState } from 'react';
-import VideoPlayer from './components/VideoPlayer';
+import React, { useState } from 'react';
+import { BackgroundFilteredVideo, ProcessingStats } from './components/BackgroundFilteredVideo';
+import { EffectControls } from './components/EffectControls';
+import DetectionStats from './components/DetectionStats';
 import { videoUrl } from './consts';
 
 export interface FaceDetection {
@@ -13,8 +15,9 @@ export interface FaceDetection {
   }
 
 const App: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [response, setResponse] = useState<string>('');
+  const [effectEnabled, setEffectEnabled] = useState<boolean>(false);
+  const [stats, setStats] = useState<ProcessingStats>({ fps: 0, processingTime: 0 });
 
   const pingBackend = async () => {
     try {
@@ -31,16 +34,29 @@ const App: React.FC = () => {
   return (
     <div className="container">
       <div style={{ textAlign: 'center' }}>
-        <div className="video-container">
-          <VideoPlayer
-            ref={videoRef}
-            src={videoUrl}
-            onLoadedMetadata={() => console.log('Video loaded')}
+        <h1 style={{ marginBottom: '20px' }}>Video Background Filter</h1>
+
+        <BackgroundFilteredVideo
+          videoUrl={videoUrl}
+          effectEnabled={effectEnabled}
+          onStatsUpdate={setStats}
+        />
+
+        <EffectControls
+          enabled={effectEnabled}
+          onToggle={setEffectEnabled}
+        />
+
+        {effectEnabled && (
+          <DetectionStats
+            fps={stats.fps}
+            processingTime={stats.processingTime}
+            isProcessing={effectEnabled}
           />
-        </div>
-        
+        )}
+
         <div style={{ marginTop: '20px' }}>
-          <button 
+          <button
             onClick={pingBackend}
             className="btn btn-primary"
           >
