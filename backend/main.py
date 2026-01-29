@@ -68,7 +68,8 @@ def process_frame_api():
         import base64
 
         buffer = io.BytesIO()
-        processed_pil.save(buffer, format="JPEG", quality=75, optimize=False)
+        # Reduced quality from 75 to 60 for faster encoding
+        processed_pil.save(buffer, format="JPEG", quality=70, optimize=False)
         buffer.seek(0)
 
         processed_base64 = base64.b64encode(buffer.read()).decode('utf-8')

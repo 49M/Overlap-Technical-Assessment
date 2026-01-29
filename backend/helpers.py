@@ -168,9 +168,10 @@ def grayscale_background_with_person(image_np, mode):
 
     # # Create 3-channel mask for broadcasting
     # mask_3ch = np.stack([binary_mask] * 3, axis=-1)
+    # Reduced kernel size from (21, 21) to (15, 15) for faster processing
     soft_mask = cv2.GaussianBlur(
         binary_mask.astype(np.float32),
-        (21, 21),
+        (15, 15),
         0
     )
 
@@ -189,8 +190,8 @@ def grayscale_background_with_person(image_np, mode):
             (1 - soft_mask_3ch) * gray_image_3ch
         ).astype(np.uint8)
     else:
-        # Create blurred version of entire image
-        blurred_image = cv2.GaussianBlur(image_np, (31, 31), 0)
+        # Reduced kernel size from (31, 31) to (21, 21) for faster blur
+        blurred_image = cv2.GaussianBlur(image_np, (21, 21), 0)
 
         # Blend: person stays color, background blurred
         processed_image = (

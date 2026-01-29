@@ -41,15 +41,17 @@ const App: React.FC = () => {
   const captureFrame = (video: HTMLVideoElement): Promise<Blob> => {
     const canvas = document.createElement("canvas");
 
-    const scale = Math.min(1, 1280 / video.videoWidth);
+    // Scale down to max 640px for faster processing
+    const scale = Math.min(1, 850 / Math.max(video.videoWidth, video.videoHeight));
     canvas.width = video.videoWidth * scale;
     canvas.height = video.videoHeight * scale;
 
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+    // Reduce JPEG quality to 0.5 for faster encoding/transfer
     return new Promise<Blob>((resolve) =>
-      canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.7)
+      canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.5)
     );
   };
 
