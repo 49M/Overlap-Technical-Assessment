@@ -41,7 +41,6 @@ const DetectionStats: React.FC<DetectionStatsProps> = ({
       e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
       e.currentTarget.style.borderColor = 'transparent';
     }}>
-      {/* Background decoration */}
       <div style={{
         position: 'absolute',
         top: '-20px',

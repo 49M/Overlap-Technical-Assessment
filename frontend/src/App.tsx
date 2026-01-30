@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import VideoPlayer from './components/VideoPlayer';
 import DetectionStats from './components/DetectionStats';
 import VideoProcessModeButton from './components/videoProcessModeButton';
+import GlassButton from './components/GlassButton';
+import VideoCard from './components/VideoCard';
 import { videoUrl } from './consts';
 
 export interface FaceDetection {
@@ -203,62 +205,13 @@ const App: React.FC = () => {
           style={{ display: 'none' }}
           id="video-upload-input"
         />
-        <label
-          htmlFor="video-upload-input"
-          style={{
-            background: 'rgba(255, 255, 255, 0.75)',
-            backdropFilter: 'blur(10px)',
-            color: '#7f1d1d',
-            border: '2px solid rgba(255, 53, 53, 0.2)',
-            borderRadius: '12px',
-            padding: '0.75rem 2rem',
-            fontSize: '1rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            display: 'inline-block'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-          }}
-        >
+        <GlassButton type="label" htmlFor="video-upload-input">
           Upload Custom Video
-        </label>
+        </GlassButton>
         {isCustomVideo && (
-          <button
-            onClick={handleResetVideo}
-            style={{
-              background: 'rgba(255, 255, 255, 0.75)',
-              backdropFilter: 'blur(10px)',
-              color: '#7f1d1d',
-              border: '2px solid rgba(255, 53, 53, 0.2)',
-              borderRadius: '12px',
-              padding: '0.75rem 2rem',
-              fontSize: '1rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-            }}
-          >
-            🔄 Reset to Default
-          </button>
+          <GlassButton onClick={handleResetVideo}>
+            Reset to Default
+          </GlassButton>
         )}
       </div>
 
@@ -292,119 +245,17 @@ const App: React.FC = () => {
         margin: '0 auto 3rem'
       }}>
         {/* Original Video Card */}
-        <div
-          className="video-card"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 245, 245, 0.75) 0%, rgba(255, 255, 255, 0.75) 100%)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            boxShadow: '0 20px 60px rgba(255, 53, 53, 0.2)',
-            border: '2px solid rgba(255, 53, 53, 0.1)',
-            transition: 'all 0.3s ease',
-            animation: 'slideInLeft 0.6s ease-out'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-8px)';
-            e.currentTarget.style.boxShadow = '0 30px 80px rgba(255, 53, 53, 0.3)';
-            e.currentTarget.style.borderColor = 'rgba(255, 53, 53, 0.4)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 20px 60px rgba(255, 53, 53, 0.2)';
-            e.currentTarget.style.borderColor = 'rgba(255, 53, 53, 0.1)';
-          }}
-        >
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '1rem',
-            gap: '0.75rem'
-          }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#ff3535',
-              boxShadow: '0 0 12px rgba(255, 53, 53, 0.6)',
-              animation: 'pulse 2s ease-in-out infinite'
-            }} />
-            <h3 style={{
-              margin: 0,
-              fontSize: '1.25rem',
-              fontWeight: '600',
-              color: '#7f1d1d',
-              textShadow: '0 1px 2px rgba(0,0,0,0.05)'
-            }}>
-              Original Video
-            </h3>
-          </div>
-          <div style={{
-            borderRadius: '12px',
-            overflow: 'hidden',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-          }}>
-            <VideoPlayer
-              ref={videoRef}
-              src={currentVideoUrl}
-              onLoadedMetadata={() => console.log('Video loaded')}
-            />
-          </div>
-        </div>
+        <VideoCard title="Original Video" isActive={true} animation="slideInLeft">
+          <VideoPlayer
+            ref={videoRef}
+            src={currentVideoUrl}
+            onLoadedMetadata={() => console.log('Video loaded')}
+          />
+        </VideoCard>
 
         {/* Processed Video Card */}
-        <div
-          className="video-card"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 245, 245, 0.75) 0%, rgba(255, 255, 255, 0.75) 100%)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            boxShadow: '0 20px 60px rgba(255, 53, 53, 0.2)',
-            border: '2px solid rgba(255, 53, 53, 0.1)',
-            transition: 'all 0.3s ease',
-            animation: 'slideInRight 0.6s ease-out'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-8px)';
-            e.currentTarget.style.boxShadow = '0 30px 80px rgba(255, 53, 53, 0.3)';
-            e.currentTarget.style.borderColor = 'rgba(255, 53, 53, 0.4)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 20px 60px rgba(255, 53, 53, 0.2)';
-            e.currentTarget.style.borderColor = 'rgba(255, 53, 53, 0.1)';
-          }}
-        >
+        <VideoCard title="Processed Video" isActive={!!processedImageUrl} animation="slideInRight">
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '1rem',
-            gap: '0.75rem'
-          }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: processedImageUrl ? '#ff3535' : '#fca5a5',
-              boxShadow: processedImageUrl ? '0 0 12px rgba(255, 53, 53, 0.6)' : '0 0 4px rgba(252, 165, 165, 0.4)',
-              transition: 'all 0.3s ease',
-              animation: processedImageUrl ? 'pulse 2s ease-in-out infinite' : 'none'
-            }} />
-            <h3 style={{
-              margin: 0,
-              fontSize: '1.25rem',
-              fontWeight: '600',
-              color: '#7f1d1d',
-              textShadow: '0 1px 2px rgba(0,0,0,0.05)'
-            }}>
-              Processed Video
-            </h3>
-          </div>
-          <div style={{
-            borderRadius: '12px',
-            overflow: 'hidden',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
             minHeight: '300px',
             display: 'flex',
             alignItems: 'center',
@@ -442,7 +293,7 @@ const App: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
+        </VideoCard>
       </div>
 
       {/* Statistics */}
