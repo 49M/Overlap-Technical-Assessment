@@ -30,22 +30,9 @@ const App: React.FC = () => {
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string>(videoUrl);
   const [isCustomVideo, setIsCustomVideo] = useState<boolean>(false);
 
-  // const pingBackend = async () => {
-  //   try {
-  //     const res = await fetch('http://127.0.0.1:8080/hello-world');
-  //     const data = await res.text();
-  //     setResponse(data);
-  //     console.log('Backend response:', data);
-  //   } catch (error) {
-  //     console.error('Error pinging backend:', error);
-  //     setResponse('Error connecting to backend');
-  //   }
-  // };
-
   const captureFrame = (video: HTMLVideoElement): Promise<Blob> => {
     const canvas = document.createElement("canvas");
 
-    // Scale down to max 640px for faster processing
     const scale = Math.min(1, 850 / Math.max(video.videoWidth, video.videoHeight));
     canvas.width = video.videoWidth * scale;
     canvas.height = video.videoHeight * scale;
@@ -53,9 +40,8 @@ const App: React.FC = () => {
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Reduce JPEG quality to 0.5 for faster encoding/transfer
     return new Promise<Blob>((resolve) =>
-      canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.5)
+      canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.6)
     );
   };
 
