@@ -25,6 +25,8 @@ const App: React.FC = () => {
   const [confidence, setConfidence] = useState<number>(0)
   const [faceDetections, setFaceDetections] = useState<FaceDetection[]>([]);
   const [processingMode, setProcessingMode] = useState<'grayscale' | 'blur'>('grayscale');
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string>(videoUrl);
+  const [isCustomVideo, setIsCustomVideo] = useState<boolean>(false);
 
   // const pingBackend = async () => {
   //   try {
@@ -66,6 +68,37 @@ const App: React.FC = () => {
     });
 
     return res.json();
+  };
+
+  const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('video/')) {
+      // Revoke previous blob URL to avoid memory leaks
+      if (isCustomVideo && currentVideoUrl !== videoUrl) {
+        URL.revokeObjectURL(currentVideoUrl);
+      }
+
+      const blobUrl = URL.createObjectURL(file);
+      setCurrentVideoUrl(blobUrl);
+      setIsCustomVideo(true);
+
+      // Reset processing states
+      setProcessedImageUrl('');
+      setIsProcessing(false);
+    }
+  };
+
+  const handleResetVideo = () => {
+    // Revoke blob URL to free memory
+    if (isCustomVideo && currentVideoUrl !== videoUrl) {
+      URL.revokeObjectURL(currentVideoUrl);
+    }
+
+    setCurrentVideoUrl(videoUrl);
+    setIsCustomVideo(false);
+
+    setProcessedImageUrl('');
+    setIsProcessing(false);
   };
 
   useEffect(() => {
@@ -156,6 +189,79 @@ const App: React.FC = () => {
         </p>
       </div>
 
+      {/* Video Upload Section */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '2rem',
+        gap: '1rem'
+      }}>
+        <input
+          type="file"
+          accept="video/*"
+          onChange={handleVideoUpload}
+          style={{ display: 'none' }}
+          id="video-upload-input"
+        />
+        <label
+          htmlFor="video-upload-input"
+          style={{
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(10px)',
+            color: '#7f1d1d',
+            border: '2px solid rgba(255, 53, 53, 0.2)',
+            borderRadius: '12px',
+            padding: '0.75rem 2rem',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            display: 'inline-block'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+          }}
+        >
+          Upload Custom Video
+        </label>
+        {isCustomVideo && (
+          <button
+            onClick={handleResetVideo}
+            style={{
+              background: 'rgba(255, 255, 255, 0.75)',
+              backdropFilter: 'blur(10px)',
+              color: '#7f1d1d',
+              border: '2px solid rgba(255, 53, 53, 0.2)',
+              borderRadius: '12px',
+              padding: '0.75rem 2rem',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+            }}
+          >
+            🔄 Reset to Default
+          </button>
+        )}
+      </div>
+
       {/* Processing Mode Selection */}
       <div style={{
         display: 'flex',
@@ -240,7 +346,7 @@ const App: React.FC = () => {
           }}>
             <VideoPlayer
               ref={videoRef}
-              src={videoUrl}
+              src={currentVideoUrl}
               onLoadedMetadata={() => console.log('Video loaded')}
             />
           </div>
