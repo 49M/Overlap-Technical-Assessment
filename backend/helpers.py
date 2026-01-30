@@ -200,9 +200,9 @@ def grayscale_background_with_person(image_np, mode):
         ).astype(np.uint8)
 
     # Calculate confidence as percentage of frame containing person
-    person_pixels = np.sum(binary_mask)
+    background_pixels = np.sum(binary_mask)
     total_pixels = binary_mask.size
-    person_coverage = float(person_pixels / total_pixels)
+    person_coverage = 1 - float(background_pixels / total_pixels)
 
     # Initialize detections list
     detections = []
